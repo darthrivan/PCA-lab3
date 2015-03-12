@@ -1,0 +1,6 @@
+primers/*
+!primers/primers.c
+pi/*
+!pi/pi.c
+trigon/*
+!trigon/trigon.c

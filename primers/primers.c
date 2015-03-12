@@ -5,13 +5,14 @@
 
 typedef unsigned long long bignum;
 
+#define BITSPERBYTE 8
+#define BYTESPERINT sizeof(unsigned int)
+#define BITSPERINT BITSPERBYTE * BYTESPERINT
+
 typedef struct {
-    unsigned int *p;		/* pointer to array */
-    int bitsPerByte;		/* 8 on normal systems */
-    int bytesPerInt;		/* sizeof(unsigned int) */
-    int bitsPerInt;		/* for bit arithmetic */
     bignum bitsInArray;		/* how many bits in array */
     bignum intsInArray;		/* how many uints to give necessary bits */
+    unsigned int *p;        /* pointer to array */
 } BITARRAY;
 
 void freeBitArray(BITARRAY * ba)
@@ -24,28 +25,24 @@ BITARRAY *createBitArray(bignum bits)
 {
     BITARRAY *ba = malloc(sizeof(BITARRAY));
     assert(ba != NULL);
-    ba->bitsPerByte = 8;
-    ba->bytesPerInt = sizeof(unsigned int);
-    ba->bitsPerInt = ba->bitsPerByte * ba->bytesPerInt;
-    ba->bytesPerInt = sizeof(unsigned int);
     ba->bitsInArray = bits;
-    ba->intsInArray = bits / ba->bitsPerInt + 1;
-    ba->p = malloc(ba->intsInArray * ba->bytesPerInt);
+    ba->intsInArray = bits / BITSPERINT + 1;
+    ba->p = malloc(ba->intsInArray * BYTESPERINT);
     assert(ba->p != NULL);
     return ba;
 }
 
 void setBit(BITARRAY * ba, bignum bitSS)
 {
-    unsigned int *pInt = ba->p + (bitSS / ba->bitsPerInt);
-    unsigned int remainder = (bitSS % ba->bitsPerInt);
+    unsigned int *pInt = ba->p + (bitSS / BITSPERINT);
+    unsigned int remainder = (bitSS % BITSPERINT);
     *pInt |= (1 << remainder);
 } 
 
 void clearBit(BITARRAY * ba, bignum bitSS)
 {
-    unsigned int *pInt = ba->p + (bitSS / ba->bitsPerInt);
-    unsigned int remainder = (bitSS % ba->bitsPerInt);
+    unsigned int *pInt = ba->p + (bitSS / BITSPERINT);
+    unsigned int remainder = (bitSS % BITSPERINT);
     unsigned int mask = 1 << remainder;
     mask = ~mask;
     *pInt &= mask;
@@ -53,8 +50,8 @@ void clearBit(BITARRAY * ba, bignum bitSS)
 
 int getBit(BITARRAY * ba, bignum bitSS)
 {
-    unsigned int *pInt = ba->p + (bitSS / ba->bitsPerInt);
-    unsigned int remainder = (bitSS % ba->bitsPerInt);
+    unsigned int *pInt = ba->p + (bitSS / BITSPERINT);
+    unsigned int remainder = (bitSS % BITSPERINT);
     unsigned int ret = *pInt;
     ret &= (1 << remainder);
     return (ret != 0);

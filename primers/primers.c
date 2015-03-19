@@ -7,7 +7,7 @@ typedef unsigned long long bignum;
 
 #define BITSPERBYTE 8
 #define BYTESPERINT sizeof(unsigned int)
-#define BITSPERINT BITSPERBYTE * BYTESPERINT
+#define BITSPERINT (BITSPERBYTE * BYTESPERINT)
 
 typedef struct {
     bignum bitsInArray;		/* how many bits in array */

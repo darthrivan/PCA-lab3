@@ -22,6 +22,54 @@ void DIVIDE( char *x, int n )
     }                                           
 }
 
+void DIVIDE25( char *x)                           
+{                                                
+    int j, k;
+    unsigned q, r, u;
+    long v;
+
+    r = 0;                                       
+    for( k = 0; k <= N4; k++ )                  
+    {                                            
+        u = r * 10 + x[k];                       
+        q = u / 25;                               
+        r = u - q * 25;                           
+        x[k] = q;                                
+    }                                           
+}
+
+void DIVIDE239( char *x)                           
+{                                                
+    int j, k;
+    unsigned q, r, u;
+    long v;
+
+    r = 0;                                       
+    for( k = 0; k <= N4; k++ )                  
+    {                                            
+        u = r * 10 + x[k];                       
+        q = u / 239;                               
+        r = u - q * 239;                           
+        x[k] = q;                                
+    }                                           
+}
+
+void DIVIDE5( char *x)                           
+{                                                
+    int j, k;
+    unsigned q, r, u;
+    long v;
+
+    r = 0;                                       
+    for( k = 0; k <= N4; k++ )                  
+    {                                            
+        u = r * 10 + x[k];                       
+        q = u / 5;                               
+        r = u - q * 5;                           
+        x[k] = q;                                
+    }                                           
+}
+
 void LONGDIV( char *x, int n )                          
 {                                                
     int j, k;
@@ -131,11 +179,11 @@ void calculate( void )
         LONGDIV( c, j );
 
         SUBTRACT( a, c, a );
-        DIVIDE( a, 25 );
+        DIVIDE25( a );
 
         SUBTRACT( b, c, b );
-        DIVIDE( b, 239 );
-        DIVIDE( b, 239 );
+        DIVIDE239( b );
+        DIVIDE239( b );
 
         progress();
     }
@@ -143,10 +191,10 @@ void calculate( void )
     SET( c, 1 );
 
     SUBTRACT( a, c, a );
-    DIVIDE( a, 5 );
+    DIVIDE5( a );
 
     SUBTRACT( b, c, b );
-    DIVIDE( b, 239 );
+    DIVIDE239( b );
 
     MULTIPLY( a, 4 );
     SUBTRACT( a, a, b );

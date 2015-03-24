@@ -16,19 +16,44 @@ int main(int argc, char *argv[])
 	double buffer[BUFFER_SIZE];
 	int index = 0;
 
+	double cosines[PUNTS];
+	double sines[PUNTS];
+	int computed[PUNTS];
+
 	if (argc == 1) n = N; else n = atoi(argv[1]);
 
 	srand(0);
-	for (i=0; i<n; i++)
+
+		r = rand();
+		for (j=0, d=0; j<PUNTS; j++)
+		{
+			x = cos(d);
+			y = sin(d);
+			// computed[j] = 1;
+			cosines[j] = x;
+			sines[j] = y;
+			// write(1, &x, sizeof(double));
+			// write(1, &y, sizeof(double));
+			buffer[index++] = r*x;
+			buffer[index++] = r*y;
+			if (index >= BUFFER_SIZE) {
+				write(1, buffer, BUFFER_SIZE*sizeof(double));
+				index = 0;
+			}
+			d += 2*M_PI/PUNTS;
+		}
+
+	for (i=1; i<n; i++)
 	{
 		r = rand();
 		for (j=0, d=0; j<PUNTS; j++)
 		{
-			x = r*cos(d); y = r*sin(d);
+			x = cosines[j];
+			y = sines[j];
 			// write(1, &x, sizeof(double));
 			// write(1, &y, sizeof(double));
-			buffer[index++] = x;
-			buffer[index++] = y;
+			buffer[index++] = r*x;
+			buffer[index++] = r*y;
 			if (index >= BUFFER_SIZE) {
 				write(1, buffer, BUFFER_SIZE*sizeof(double));
 				index = 0;

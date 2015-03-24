@@ -75,6 +75,9 @@ class Program(object):
 			self.args.add(arg)
 		else:
 			self.args[pos] = arg
+
+	def set_arguments(self, args):
+		self.args = args
 		
 class Compiler(object):
 	"""docstring for Compiler"""
@@ -292,7 +295,7 @@ class Tester(object):
 					   stdout=output_file)
 		except CalledProcessError:
 			Debugger.error('Failed to generate output for ' +
-				self.program.get_exec_name())
+				program.get_exec_name())
 		output_file.close()
 		if self.binary:
 			run(['cmp', '-s', 'output_original.out', 'output_tested.out'])
@@ -330,9 +333,15 @@ if __name__ == "__main__":
 		help='Add uncommitted files', nargs='+', default=[])
 	args = vars(argument_parser.parse_args(sys.argv[1:]))
 
+	# PARAMETERS
+	COMPILATION_FLAGS = ['-O3', '-lm', '-ffloat-store']
+	BINARY_OUTPUT = True
+	PROGRAM_ARGUMENTS = ['2000']
+
 	def acc(commit, code, test=None):
-		compiler  = Compiler(code, from_stdin=True)
+		compiler  = Compiler(code, flags=COMPILATION_FLAGS, from_stdin=True)
 		program   = compiler.compile('tmp_'+commit[:5])
+		program.set_arguments(PROGRAM_ARGUMENTS)
 		if test is not None:
 			try:
 				test(program)
@@ -353,8 +362,10 @@ if __name__ == "__main__":
 		code_file.close()
 	fun = None
 	if args.get('testing'):
-		compiler = Compiler(versions[0][1], from_stdin=True)
-		tester = Tester(compiler.compile('tmp_test'), binary=False)
+		compiler = Compiler(versions[0][1], flags=COMPILATION_FLAGS, from_stdin=True)
+		program  = compiler.compile('tmp_test')
+		program.set_arguments(PROGRAM_ARGUMENTS)
+		tester   = Tester(program, binary=BINARY_OUTPUT)
 		fun = tester.test
 	elapseds = [(commit, acc(commit, code, fun)) for (commit, code) in versions]
 	plotter  = Plotter()

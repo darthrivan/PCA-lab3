@@ -5,6 +5,8 @@
 int N, N4;
 char a[10240], b[10240], c[10240];
 char string[100];
+unsigned memo239_q[239][10];
+unsigned memo239_r[239][10];
 
 void DIVIDE( char *x, int n )                           
 {                                                
@@ -38,20 +40,43 @@ void DIVIDE25( char *x)
     }                                           
 }
 
+void precompute() {
+    // precomputing DIVIDE239
+    char d;
+    unsigned q, r, u;
+    for (r = 0; r < 239; ++r) {
+    // char *div239 = memo239_q;
+    // for (r = 0; r < 2390; r += 10) {
+        for (d = 0; d <= 9; ++d) {
+            u = (r*10 + d);
+            q = u / 239;
+            memo239_q[r][d] = q;
+            memo239_r[r][d] = u - q*239;
+            // printf("u: %u, q: %u, r: %i\n", u, q, (u - q*239));
+        }
+    }
+}
+
 void DIVIDE239( char *x)                           
 {                                                
     int j, k;
     unsigned q, r, u;
     long v;
 
-    r = 0;                                       
-    for( k = 0; k <= N4; k++ )                  
-    {                                            
-        u = r * 10 + x[k];                       
-        q = u / 239;                               
-        r = u - q * 239;                           
-        x[k] = q;                                
-    }                                           
+    r = 0;
+    for( k = 0; k <= N4; k++ )
+    {
+            // u = r * 10 + x[k];
+            // q = u / 239;
+            // r = u - q * 239;
+            // x[k] = q;
+            // u = r * 10 + x[k];
+            q = memo239_q[r][x[k]];
+            // printf("u: %u, q: %u, r: %u, predicted r: %u\n", u, q, (u - q*239), memo239_r[r][x[k]]);
+            // r = u - q*239;
+            r = memo239_r[r][x[k]];
+            x[k] = q;
+    }
 }
 
 void DIVIDE5( char *x)                           
@@ -60,14 +85,24 @@ void DIVIDE5( char *x)
     unsigned q, r, u;
     long v;
 
-    r = 0;                                       
-    for( k = 0; k <= N4; k++ )                  
-    {                                            
-        u = r * 10 + x[k];                       
-        q = u / 5;                               
-        r = u - q * 5;                           
-        x[k] = q;                                
-    }                                           
+    char memo[5][10] = {
+        {0, 0, 0, 0, 0, 1, 1, 1, 1, 1}, // r: 0
+        {2, 2, 2, 2, 2, 3, 3, 3, 3, 3}, // r: 1
+        {4, 4, 4, 4, 4, 5, 5, 5, 5, 5}, // r: 2
+        {6, 6, 6, 6, 6, 7, 7, 7, 7, 7}, // r: 3
+        {8, 8, 8, 8, 8, 9, 9, 9, 9, 9} // r: 4
+    };
+
+    r = 0;
+    for( k = 0; k <= N4; k++ )
+    {
+        u = r * 10 + x[k];
+        // q = u / 5;
+        q = memo[r][x[k]];
+        // printf("r: %u, x[k]: %u, u: %u, q: %u\n", r, x[k], u, q);
+        r = u - q * 5;
+        x[k] = q;
+    }
 }
 
 void LONGDIV( char *x, int n )                          
@@ -156,6 +191,8 @@ int main( int argc, char *argv[] )
     N = 10000;
 
     setbuf(stdout, NULL);
+
+    precompute();
 
     calculate();
 

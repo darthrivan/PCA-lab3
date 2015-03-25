@@ -7,22 +7,8 @@ char a[10240], b[10240], c[10240];
 char string[100];
 unsigned memo239_q[239][10];
 unsigned memo239_r[239][10];
-
-void DIVIDE( char *x, int n )                           
-{                                                
-    int j, k;
-    unsigned q, r, u;
-    long v;
-
-    r = 0;                                       
-    for( k = 0; k <= N4; k++ )                  
-    {                                            
-        u = r * 10 + x[k];                       
-        q = u / n;                               
-        r = u - q * n;                           
-        x[k] = q;                                
-    }                                           
-}
+unsigned memo25_q[25][10];
+unsigned memo25_r[25][10];
 
 void DIVIDE25( char *x)                           
 {                                                
@@ -33,10 +19,9 @@ void DIVIDE25( char *x)
     r = 0;                                       
     for( k = 0; k <= N4; k++ )                  
     {                                            
-        u = r * 10 + x[k];                       
-        q = u / 25;                               
-        r = u - q * 25;                           
-        x[k] = q;                                
+        q = memo25_q[r][x[k]];
+        r = memo25_r[r][x[k]];
+        x[k] = q;
     }                                           
 }
 
@@ -45,14 +30,21 @@ void precompute() {
     char d;
     unsigned q, r, u;
     for (r = 0; r < 239; ++r) {
-    // char *div239 = memo239_q;
-    // for (r = 0; r < 2390; r += 10) {
         for (d = 0; d <= 9; ++d) {
             u = (r*10 + d);
             q = u / 239;
             memo239_q[r][d] = q;
             memo239_r[r][d] = u - q*239;
-            // printf("u: %u, q: %u, r: %i\n", u, q, (u - q*239));
+        }
+    }
+
+    // precomputing DIVIDE25
+    for (r = 0; r < 25; ++r) {
+        for (d = 0; d <= 9; ++d) {
+            u = (r*10 + d);
+            q = u / 25;
+            memo25_q[r][d] = q;
+            memo25_r[r][d] = u - q*25;
         }
     }
 }
@@ -66,16 +58,9 @@ void DIVIDE239( char *x)
     r = 0;
     for( k = 0; k <= N4; k++ )
     {
-            // u = r * 10 + x[k];
-            // q = u / 239;
-            // r = u - q * 239;
-            // x[k] = q;
-            // u = r * 10 + x[k];
-            q = memo239_q[r][x[k]];
-            // printf("u: %u, q: %u, r: %u, predicted r: %u\n", u, q, (u - q*239), memo239_r[r][x[k]]);
-            // r = u - q*239;
-            r = memo239_r[r][x[k]];
-            x[k] = q;
+        q = memo239_q[r][x[k]];
+        r = memo239_r[r][x[k]];
+        x[k] = q;
     }
 }
 

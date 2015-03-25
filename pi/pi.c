@@ -10,6 +10,8 @@ unsigned memo239_r[239][10];
 unsigned memo25_q[25][10];
 unsigned memo25_r[25][10];
 
+char memo_s[10][10][2][2];
+
 void DIVIDE25( char *x)                           
 {                                                
     int j, k;
@@ -27,7 +29,7 @@ void DIVIDE25( char *x)
 
 void precompute() {
     // precomputing DIVIDE239
-    char d;
+    char d, d2, d3;
     unsigned q, r, u;
     for (r = 0; r < 239; ++r) {
         for (d = 0; d <= 9; ++d) {
@@ -45,6 +47,19 @@ void precompute() {
             q = u / 25;
             memo25_q[r][d] = q;
             memo25_r[r][d] = u - q*25;
+        }
+    }
+
+    // subtract memoization
+    for (d = 0; d <= 9; ++d) {
+        for (d2 = 0; d2 <= 9; ++d2) {
+            d3 = d - d2;
+            memo_s[d][d2][0][0] = d3 >= 0?d3:d3+10;
+            memo_s[d][d2][0][1] = d3 < 0;
+            d3--;
+            memo_s[d][d2][1][0] = d3 >= 0?d3:d3+10;
+            memo_s[d][d2][1][1] = d3 < 0;
+
         }
     }
 }
@@ -155,13 +170,17 @@ void SUBTRACT( char *x, char *y, char *z )
     int j, k;
     unsigned q, r, u;
     long v;
+    r = 0;
     for( k = N4; k >= 0; k-- )                   
     {                                            
-        if( (x[k] = y[k] - z[k]) < 0 )           
-        {                                        
-            x[k] += 10;                          
-            z[k-1]++;                            
-        }                                        
+        // if( (x[k] = y[k] - z[k]) < 0 )           
+        // {                                        
+        //     x[k] += 10;                          
+        //     z[k-1]++;                            
+        // }
+        char *p = memo_s[y[k]][z[k]][r];
+        x[k] = p[0];
+        r = p[1];
     }                                            
 }
 

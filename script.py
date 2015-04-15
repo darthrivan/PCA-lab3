@@ -249,7 +249,12 @@ class Plotter(object):
 	def plot(self, data, save=None, xlabel=None, ylabel=None):
 		self._create_data_file(data)
 		if save is not None:
-			self.gnuplot.stdin.write('set terminal png\n')
+			if save[-3:] == 'png':
+				self.gnuplot.stdin.write('set terminal png\n')
+			elif save[-3:] == 'tex':
+				self.gnuplot.stdin.write('set terminal epslatex color\n')
+			else:
+				self.gnuplot.stdin.write('set terminal %s\n' % save[-3:])
 			self.gnuplot.stdin.write('set output "%s"\n' % save)
 		if xlabel is not None:
 			self.gnuplot.stdin.write('set xlabel "%s"\n' % xlabel)
@@ -334,9 +339,10 @@ if __name__ == "__main__":
 	args = vars(argument_parser.parse_args(sys.argv[1:]))
 
 	# PARAMETERS
-	COMPILATION_FLAGS = ['-O3', '-lm', '-ffloat-store']
-	BINARY_OUTPUT = True
-	PROGRAM_ARGUMENTS = ['2000']
+	COMPILATION_FLAGS = ['-O3', '-ffloat-store', '-lm']
+	BINARY_OUTPUT = False
+	PROGRAM_ARGUMENTS = []
+	EXT = 'tex'
 
 	def acc(commit, code, test=None):
 		compiler  = Compiler(code, flags=COMPILATION_FLAGS, from_stdin=True)
@@ -369,11 +375,11 @@ if __name__ == "__main__":
 		fun = tester.test
 	elapseds = [(commit, acc(commit, code, fun)) for (commit, code) in versions]
 	plotter  = Plotter()
-	plotter.plot(elapseds, save='elapseds.png', xlabel='commit', ylabel='Elapsed Time')
+	plotter.plot(elapseds, save='elapseds.'+EXT, xlabel='commit', ylabel='Elapsed Time')
 	plotter.close()
 	plotter  = Plotter()
 	plotter.plot(map(lambda a: (a[0], elapseds[0][1]/a[1]), elapseds),
-		save='speedups.png', xlabel='commit', ylabel='Speed Up')
+		save='speedups.'+EXT, xlabel='commit', ylabel='Speed Up')
 	for (commit, time) in elapseds:
 		print "%s %f\n" % (commit, time)
 	DEVNULL.close()

@@ -5,10 +5,10 @@
 int N, N4;
 char a[10240], b[10240], c[10240];
 char string[100];
-unsigned memo239_q[239][10];
-unsigned memo239_r[239][10];
-unsigned memo25_q[25][10];
-unsigned memo25_r[25][10];
+unsigned short memo239_q[239][10];
+unsigned short memo239_r[239][10];
+unsigned short memo25_q[25][10];
+unsigned short memo25_r[25][10];
 
 char memo_s[10][10][2][2];
 

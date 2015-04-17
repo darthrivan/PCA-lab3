@@ -9,6 +9,8 @@ unsigned short memo239_q[239][10];
 unsigned short memo239_r[239][10];
 unsigned short memo25_q[25][10];
 unsigned short memo25_r[25][10];
+unsigned short memo5_q[5][10];
+unsigned short memo5_r[5][10];
 
 char memo_s[10][10][2][2];
 
@@ -50,6 +52,16 @@ void precompute() {
         }
     }
 
+    // precomputing DIVIDE5
+    for (r = 0; r < 5; ++r) {
+        for (d = 0; d <= 9; ++d) {
+            u = (r*10 + d);
+            q = u / 5;
+            memo5_q[r][d] = q;
+            memo5_r[r][d] = u - q*5;
+        }
+    }
+    
     // subtract memoization
     for (d = 0; d <= 9; ++d) {
         for (d2 = 0; d2 <= 9; ++d2) {
@@ -85,22 +97,11 @@ void DIVIDE5( char *x)
     unsigned q, r, u;
     long v;
 
-    char memo[5][10] = {
-        {0, 0, 0, 0, 0, 1, 1, 1, 1, 1}, // r: 0
-        {2, 2, 2, 2, 2, 3, 3, 3, 3, 3}, // r: 1
-        {4, 4, 4, 4, 4, 5, 5, 5, 5, 5}, // r: 2
-        {6, 6, 6, 6, 6, 7, 7, 7, 7, 7}, // r: 3
-        {8, 8, 8, 8, 8, 9, 9, 9, 9, 9} // r: 4
-    };
-
     r = 0;
     for( k = 0; k <= N4; k++ )
     {
-        u = r * 10 + x[k];
-        // q = u / 5;
-        q = memo[r][x[k]];
-        // printf("r: %u, x[k]: %u, u: %u, q: %u\n", r, x[k], u, q);
-        r = u - q * 5;
+        q = memo5_q[r][x[k]];
+        r = memo5_r[r][x[k]];
         x[k] = q;
     }
 }
@@ -111,8 +112,8 @@ void LONGDIV( char *x, int n )
     unsigned q, r, u;
     long v;
 
-    if( n < 6553 )                               
-    {                                            
+    // if( n < 6553 )                               
+    // {                                            
         r = 0;                                   
         for( k = 0; k <= N4; k++ )               
         {                                        
@@ -121,27 +122,27 @@ void LONGDIV( char *x, int n )
             r = u - q * n;                       
             x[k] = q;                            
         }                                       
-    }                                            
-    else                                         
-    {                                            
-        r = 0;                                   
-        for( k = 0; k <= N4; k++ )              
-        {                                       
-            if( r < 6553 )                      
-            {                                   
-                u = r * 10 + x[k];              
-                q = u / n;                      
-                r = u - q * n;                  
-            }                                   
-            else                                
-            {                                   
-                v = (long) r * 10 + x[k];       
-                q = v / n;                      
-                r = v - q * n;                  
-            }                                   
-            x[k] = q;                           
-        }                                       
-    }                                           
+    // }                                            
+    // else                                         
+    // {                                            
+    //     r = 0;                                   
+    //     for( k = 0; k <= N4; k++ )              
+    //     {                                       
+    //         if( r < 6553 )                      
+    //         {                                   
+    //             u = r * 10 + x[k];              
+    //             q = u / n;                      
+    //             r = u - q * n;                  
+    //         }                                   
+    //         else                                
+    //         {                                   
+    //             v = (long) r * 10 + x[k];       
+    //             q = v / n;                      
+    //             r = v - q * n;                  
+    //         }                                   
+    //         x[k] = q;                           
+    //     }                                       
+    // }                                           
 }
 
 void MULTIPLY( char *x, int n )                        
@@ -173,11 +174,6 @@ void SUBTRACT( char *x, char *y, char *z )
     r = 0;
     for( k = N4; k >= 0; k-- )                   
     {                                            
-        // if( (x[k] = y[k] - z[k]) < 0 )           
-        // {                                        
-        //     x[k] += 10;                          
-        //     z[k-1]++;                            
-        // }
         char *p = memo_s[y[k]][z[k]][r];
         x[k] = p[0];
         r = p[1];
